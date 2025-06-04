@@ -1,11 +1,13 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Login: React.FC = () => {
 
     const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
+    const { setIsAuthenticated } = useAuth();
 
     const navigate = useNavigate();
 
@@ -18,13 +20,7 @@ const Login: React.FC = () => {
             },{
                 withCredentials : true
             });
-
-            const res = await axios.get('https://frontend-take-home-service.fetch.com/dogs/breeds', {
-                withCredentials : true
-            });
-
-            console.log(res);
-            
+            setIsAuthenticated(true);
             navigate("/dogs/search");
         }
         catch(err){
