@@ -32,14 +32,11 @@ Welcome to my submission for the Fetch Frontend Take-Home Project. This React ap
 ### ✅ Scroll-To-Top Button
 - Always-visible FAB scrolls the page to the top when clicked.
 
----
-
-## 🔧 In Progress
-
-### ⚙️ Location Filtering (Work in Progress)
-- API integration with `/locations` and `/locations/search` is underway.
-- Goal: filter dogs based on zip codes and show city/state information.
-- This feature will allow users to narrow down results geographically.
+### ✅  Location Data
+- Integrated with `/locations` API to enrich dog data.
+- Maps ZIP codes to: **City**, **State**, **County**, **Latitude**, **Longitude**.
+- Location info displayed on each `DogCard`.
+- Used `Map<string, string[]>` for efficient ZIP-to-location lookup.
 
 ---
 
@@ -50,7 +47,6 @@ Welcome to my submission for the Fetch Frontend Take-Home Project. This React ap
 
 ### 🐶 Initial Home Page
 ![Initial Home Page](./src/assets/screenshots/initialHome.png)
-
 
 ### 🐶 Breed Filter Home Page
 ![Breed Filter Home Page](./src/assets/screenshots/breedFilter.png)
@@ -63,6 +59,9 @@ Welcome to my submission for the Fetch Frontend Take-Home Project. This React ap
 
 ### ❤️ Match Modal
 ![Match](./src/assets/screenshots/modalMatch.png)
+
+### 🐶 Displaying with location
+![Cards with location](./src/assets/screenshots/locationCards.png)
 
 
 ---
@@ -77,6 +76,18 @@ Welcome to my submission for the Fetch Frontend Take-Home Project. This React ap
 - **React Icons** for UI icons (heart, arrow, etc.)
 
 ---
+
+
+### 🧠 Why I Didn't Use Redux
+
+For this project, I chose not to use Redux to keep things simple and lightweight. The app only requires a few local state variables to manage things like selected breeds, favorites, and authentication. Using Redux would have added unnecessary complexity for such a small scope.
+
+React’s built-in `useState` and `useContext` were more than enough to manage the state cleanly and effectively.
+
+If the app grows in complexity, Redux or another global state manager can be added later.
+
+
+
 
 ## 🛠️ Setup & Running Locally
 

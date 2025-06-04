@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaArrowUp } from "react-icons/fa";
 import DogCard from "./DogCard"; 
+import { BASE_URL } from "./constant";
 
 interface Dog {
   id: string;
@@ -16,6 +17,8 @@ interface Match {
 }
 
 const Body: React.FC = () => {
+
+  {/* Local State Variables */}
   const [breeds, setBreeds] = useState<string[]>([]);
   const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
   const [dogs, setDogs] = useState<Dog[]>([]);
@@ -23,13 +26,15 @@ const Body: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [total, setTotal] = useState(0);
   const [favorites, setFavorites] = useState<Map<string, Dog>>(new Map());
+  const [locationInfo, setLocationInfo] = useState<Map<string, string[]>>(new Map());
   const [match, setMatch] = useState<Match | null>(null);
 
+  {/* Fetching all breeds at initial load */}
   useEffect(() => {
     const fetchBreeds = async () => {
       try {
         const res = await axios.get(
-          "https://frontend-take-home-service.fetch.com/dogs/breeds",
+          BASE_URL + "/dogs/breeds",
           { withCredentials: true }
         );
         setBreeds(res?.data);
@@ -42,12 +47,14 @@ const Body: React.FC = () => {
 
   useEffect(() => {
     const fetchDogs = async () => {
+      {/* If no breed is selected then no search */}
       if (selectedBreeds.length === 0) {
         setDogs([]);
         return;
       }
 
       try {
+        {/* Filter Searching */}
         const searchParams = new URLSearchParams();
         selectedBreeds.forEach((breed) =>
           searchParams.append("breeds", breed)
@@ -57,19 +64,47 @@ const Body: React.FC = () => {
         searchParams.append("from", from.toString());
 
         const res1 = await axios.get(
-          `https://frontend-take-home-service.fetch.com/dogs/search?${searchParams.toString()}`,
+          BASE_URL + `/dogs/search?${searchParams.toString()}`,
           { withCredentials: true }
         );
 
         const ids: string[] = res1?.data?.resultIds;
         setTotal(res1?.data?.total);
 
+        {/* Getting all dogs information */}
         const res2 = await axios.post(
-          "https://frontend-take-home-service.fetch.com/dogs",
+          BASE_URL + "/dogs",
           ids,
           { withCredentials: true }
         );
         setDogs(res2?.data);
+        console.log(res2?.data);
+
+        const arr = res2?.data;
+        const zipCodes = arr.map((v: any)=>v?.zip_code);
+        
+        {/* Getting location information. */}
+        const res3 = await axios.post(BASE_URL + "/locations", 
+          zipCodes,
+          {withCredentials : true});
+        
+        console.log(res3?.data);
+
+        {/* Mapping location information with zip codes to display in cards. */}
+        const locationMap = new Map<string, string[]>();
+
+        res3.data.forEach((loc: any) => {
+          locationMap.set(loc?.zip_code, [
+            loc?.city,
+            loc?.state,
+            loc?.county,
+            loc?.latitude.toString(),
+            loc?.longitude.toString()
+          ]);
+        });
+
+        setLocationInfo(locationMap);
+        
       } catch (err) {
         console.error("Error fetching dogs", err);
       }
@@ -86,24 +121,26 @@ const Body: React.FC = () => {
     );
   };
 
+  {/* Favorite list */}
   const toggleFavorite = (dog: Dog) => {
     setFavorites((prev) => {
       const newMap = new Map(prev);
-      if (newMap.has(dog.id)) {
-        newMap.delete(dog.id);
+      if (newMap.has(dog?.id)) {
+        newMap.delete(dog?.id);
       } else {
-        newMap.set(dog.id, dog);
+        newMap.set(dog?.id, dog);
       }
       return newMap;
     });
   };
 
+  {/* Dogs Match */}
   const handleMatch = async () => {
     const favoriteIds = Array.from(favorites.keys());
     if (favoriteIds.length === 0) return;
     try {
       const res = await axios.post(
-        "https://frontend-take-home-service.fetch.com/dogs/match",
+        BASE_URL + "/dogs/match",
         favoriteIds,
         { withCredentials: true }
       );
@@ -215,6 +252,7 @@ const Body: React.FC = () => {
             <DogCard
               key={dog.id}
               dog={dog}
+              locationInfo = {locationInfo}
               isFavorite={favorites.has(dog.id)}
               onToggleFavorite={toggleFavorite}
             />
@@ -234,15 +272,18 @@ const Body: React.FC = () => {
       {match && favorites.has(match.match) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-red-100 bg-opacity-50">
           <div className="relative bg-white border-2 border-red-500 rounded-2xl shadow-2xl w-[90%] max-w-md p-6">
+            <h2 className="text-red-500 text-center text-xl"> ❤️ Match found! Looks like you and this dog are meant to be. Take the next step toward adoption!</h2>
             <button
               onClick={() => setMatch(null)}
               className="absolute top-2 right-2 text-red-600 text-xl font-bold hover:text-red-800"
             >
               ✕
             </button>
+
             <DogCard
               dog={favorites.get(match.match)!}
               isFavorite={favorites.has(match.match)}
+              locationInfo={locationInfo}
               onToggleFavorite={toggleFavorite}
             />
           </div>

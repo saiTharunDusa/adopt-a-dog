@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { BASE_URL } from "./constant";
 
 const Login: React.FC = () => {
 
@@ -11,10 +12,11 @@ const Login: React.FC = () => {
 
     const navigate = useNavigate();
 
+    {/* Login Handling along for protected route */}
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try{
-            await axios.post('https://frontend-take-home-service.fetch.com/auth/login',{
+            await axios.post(BASE_URL + '/auth/login',{
                 name,
                 email
             },{
