@@ -13,7 +13,7 @@ const Search: React.FC = () => {
     const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         try {
-            const res = await axios.post(BASE_URL + "/auth/logout", {}, {
+            await axios.post(BASE_URL + "/auth/logout", {}, {
                 withCredentials: true,
             });
             setIsAuthenticated(false);
