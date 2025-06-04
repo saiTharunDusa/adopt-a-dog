@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { BASE_URL } from "./constant";
+import backgroundPic from "../assets/screenshots/bacgroundPic.jpeg"
 
 const Login: React.FC = () => {
 
@@ -33,7 +34,7 @@ const Login: React.FC = () => {
       
       
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+    <div style={{backgroundImage : `url(${backgroundPic})`}} className="min-h-screen bg-cover bg-center bg-white flex flex-col items-center justify-center">
       <h1 className="text-4xl font-bold text-center text-red-600 mb-8">
         Adopt-A-Dog
       </h1>

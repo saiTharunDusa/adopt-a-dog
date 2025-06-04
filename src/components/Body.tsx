@@ -78,7 +78,6 @@ const Body: React.FC = () => {
           { withCredentials: true }
         );
         setDogs(res2?.data);
-        console.log(res2?.data);
 
         const arr = res2?.data;
         const zipCodes = arr.map((v: any)=>v?.zip_code);
@@ -88,7 +87,6 @@ const Body: React.FC = () => {
           zipCodes,
           {withCredentials : true});
         
-        console.log(res3?.data);
 
         {/* Mapping location information with zip codes to display in cards. */}
         const locationMap = new Map<string, string[]>();

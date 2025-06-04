@@ -18,11 +18,9 @@ const Search: React.FC = () => {
             });
             setIsAuthenticated(false);
             navigate("/");
-            console.log(res);
         } catch (err) {
             console.log(err);
         }
-        console.log("Logging out...");
     };
 
     return (
